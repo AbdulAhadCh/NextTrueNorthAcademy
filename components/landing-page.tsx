@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { ReactNode } from "react";
 
 const contactHref =
@@ -13,6 +12,7 @@ type IconName =
   | "core"
   | "heart"
   | "mic"
+  | "northstar"
   | "play"
   | "repeat"
   | "shield"
@@ -53,6 +53,12 @@ function Icon({ name, className = "" }: { name: IconName; className?: string }) 
       <>
         <rect x="9" y="3" width="6" height="12" rx="3" />
         <path d="M5 11a7 7 0 0 0 14 0m-7 7v3m-4 0h8" />
+      </>
+    ),
+    northstar: (
+      <>
+        <path d="m12 2 2.8 7.2L22 12l-7.2 2.8L12 22l-2.8-7.2L2 12l7.2-2.8L12 2Z" />
+        <circle cx="12" cy="12" r="2.3" />
       </>
     ),
     play: (
@@ -118,28 +124,27 @@ function ActionLink({
 function Brand() {
   return (
     <a aria-label="TrueNorth Academy home" className="brand" href="#home">
-      <Image
-        alt=""
-        className="brand__crest"
-        height={48}
-        priority
-        src="/truenorth-crest.png"
-        width={48}
-      />
-      <span className="brand__name">
-        <strong>TrueNorth</strong>
-        <span>Academy</span>
+      <span aria-hidden="true" className="brand__mark">
+        <Icon name="northstar" />
+      </span>
+      <span className="brand__lockup">
+        <span className="brand__name">
+          <strong>TrueNorth</strong>
+          <span>Academy</span>
+        </span>
+        <span className="brand__tagline">PEBC Prep</span>
       </span>
     </a>
   );
 }
 
 const navigation = [
-  { href: "#home", label: "Home" },
-  { href: "#compare", label: "Why TrueNorth" },
+  { href: "#why-truenorth", label: "Why TrueNorth" },
   { href: "#courses", label: "Programs" },
   { href: "#osce", label: "Voice AI OSCE" },
+  { href: "#learning-loop", label: "Learning Loop" },
   { href: "#pricing", label: "Pricing" },
+  { href: "#reviews", label: "Reviews" },
 ];
 
 function SiteHeader() {
@@ -156,7 +161,7 @@ function SiteHeader() {
         </nav>
         <div className="site-header__actions">
           <a className="header-contact" href="#community">
-            Contact
+            <Icon name="heart" /> WhatsApp Community
           </a>
           <ActionLink href="/login">Get started</ActionLink>
           <details className="mobile-nav">
@@ -303,15 +308,21 @@ function ProgramCard({
   program: (typeof programs)[number];
 }) {
   return (
-    <article className="program-card">
-      <span
-        className={`program-card__badge${
-          program.badge === "Most popular" ? " program-card__badge--popular" : ""
-        }`}
-      >
-        {program.badge}
-      </span>
-      <p className="program-card__step">{program.step}</p>
+    <article
+      className={`program-card${
+        program.badge === "Most popular" ? " program-card--popular" : ""
+      }`}
+    >
+      <div className="program-card__meta">
+        <span
+          className={`program-card__badge${
+            program.badge === "Most popular" ? " program-card__badge--popular" : ""
+          }`}
+        >
+          {program.badge}
+        </span>
+        <span className="program-card__step">{program.step}</span>
+      </div>
       <h3>{program.title}</h3>
       <p className="program-card__description">{program.description}</p>
       <ul className="check-list">
@@ -322,9 +333,7 @@ function ProgramCard({
           </li>
         ))}
       </ul>
-      <a className="text-link" href="#pricing">
-        View program <Icon name="chevron" />
-      </a>
+      <ActionLink href={contactHref}>View program</ActionLink>
     </article>
   );
 }
@@ -352,56 +361,56 @@ const scenarios = [
 
 function OsceSection() {
   return (
-    <section className="section section--tint" id="osce">
-      <div className="container">
-        <SectionHeading
-          description="Practise with lifelike patient scenarios in a low-pressure environment, whenever it fits your schedule."
-          eyebrow="AI-powered practice"
-          title={
-            <>
-              Meet your <em>24/7 OSCE</em> practice partner
-            </>
-          }
-        />
-        <div className="simulator-panel">
-          <div className="simulator-panel__intro">
-            <span className="simulator-panel__icon">
-              <Icon name="mic" />
-            </span>
-            <div>
-              <p className="eyebrow">Voice AI patient simulator</p>
-              <h3>Real-time OSCE practice, on your terms.</h3>
-              <p>
-                Work through patient conversations, practise your approach, and
-                build confidence before exam day.
-              </p>
-            </div>
+    <section className="section osce-section" id="osce">
+      <div className="container osce-section__inner">
+        <div className="osce-section__heading">
+          <SectionHeading
+            align="left"
+            description="Practise with lifelike patient scenarios in a low-pressure environment, whenever it fits your schedule."
+            eyebrow="AI-powered practice"
+            title={
+              <>
+                Meet your <em>24/7 OSCE</em> practice partner
+              </>
+            }
+          />
+          <ActionLink href={contactHref}>Ask about the OSCE simulator</ActionLink>
+        </div>
+        <div className="simulator-banner">
+          <div>
+            <p className="eyebrow">Voice AI patient simulator</p>
+            <h3>Real-time OSCE practice, on your terms.</h3>
+            <p>
+              Work through patient conversations, practise your approach, and
+              build confidence before exam day.
+            </p>
           </div>
+          <span>
+            <Icon name="clock" /> Zero scheduling delays
+          </span>
+        </div>
+        <div className="simulator-panel">
           <div className="scenario-grid">
             {scenarios.map((scenario) => (
               <article className="scenario-card" key={scenario.title}>
                 <div className="scenario-card__top">
-                  <span className="scenario-card__icon">
-                    <Icon name={scenario.icon} />
-                  </span>
                   <span className="duration">
                     <Icon name="clock" /> 7 min
                   </span>
+                  <span className="scenario-card__category">{scenario.category}</span>
                 </div>
-                <p className="scenario-card__category">{scenario.category}</p>
                 <h4>{scenario.title}</h4>
                 <p className="scenario-card__patient">Patient: {scenario.patient}</p>
                 <div className="scenario-card__modes">
-                  <span>Learn mode</span>
-                  <span>Exam mode</span>
+                  <a href={contactHref}>Learn mode</a>
+                  <a href={contactHref}>Exam mode</a>
                 </div>
               </article>
             ))}
           </div>
-          <div className="simulator-panel__action">
-            <p>Practise at your pace. Repeat each case as often as you need.</p>
-            <ActionLink href={contactHref}>Ask about the OSCE simulator</ActionLink>
-          </div>
+          <p className="simulator-panel__note">
+            Practise at your pace. Repeat each case as often as you need.
+          </p>
         </div>
       </div>
     </section>
@@ -564,80 +573,187 @@ function LandingPage() {
       <SiteHeader />
       <main>
         <section className="hero" id="home">
-          <div className="container hero__content">
-            <p className="eyebrow hero__eyebrow">
-              For international pharmacy graduates
-            </p>
-            <h1>
-              Master the PEBC Qualifying Exam &amp; OSCE{" "}
-              <em>— 100% On-Demand</em>
-            </h1>
-            <p className="hero__description">
-              Skip rigid class schedules. Access unlimited lecture replays, a
-              built-in Foundational Core, and an interactive AI Voice Patient
-              Simulator.
-            </p>
-            <div className="hero__actions">
-              <ActionLink href="#pricing">Explore programs</ActionLink>
-              <ActionLink href="#osce" variant="secondary">
-                Try the Voice AI OSCE
-              </ActionLink>
+          <div className="container">
+            <div className="hero__layout">
+              <div className="hero__content">
+                <p className="eyebrow hero__eyebrow">
+                  For international pharmacy graduates
+                </p>
+                <h1>
+                  Master the PEBC Qualifying Exam &amp; OSCE{" "}
+                  <em>— 100% On-Demand</em>
+                </h1>
+                <p className="hero__description">
+                  Skip rigid class schedules. Access unlimited lecture replays,
+                  a built-in Foundational Core, and an interactive AI Voice
+                  Patient Simulator.
+                </p>
+                <div className="hero__actions">
+                  <ActionLink href="#courses">Explore programs</ActionLink>
+                  <ActionLink href="#osce" variant="secondary">
+                    <Icon name="mic" /> Try the Voice AI OSCE
+                  </ActionLink>
+                </div>
+                <div aria-label="Program highlights" className="hero__highlights">
+                  <span>
+                    <Icon name="check" /> Unlimited replays
+                  </span>
+                  <span>
+                    <Icon name="check" /> 24/7 AI voice practice
+                  </span>
+                  <span>
+                    <Icon name="check" /> PEBC blueprint aligned
+                  </span>
+                </div>
+              </div>
+
+              <aside aria-label="Sample OSCE station preview" className="station-card">
+                <div className="station-card__header">
+                  <div>
+                    <span className="station-card__status" />
+                    <div>
+                      <p className="eyebrow">Sample case preview</p>
+                      <h2>Burning Chest Pain</h2>
+                    </div>
+                  </div>
+                  <span className="station-card__timer">
+                    <Icon name="clock" /> 06:42
+                  </span>
+                </div>
+                <div className="station-card__details">
+                  <div>
+                    <span>Patient</span>
+                    <strong>Michael C.</strong>
+                  </div>
+                  <div>
+                    <span>Age</span>
+                    <strong>42 years</strong>
+                  </div>
+                  <div>
+                    <span>Domain</span>
+                    <strong>Gastrointestinal</strong>
+                  </div>
+                </div>
+                <div className="station-dialog">
+                  <span className="station-dialog__avatar">PT</span>
+                  <div>
+                    <p className="eyebrow">Patient prompt</p>
+                    <p>
+                      “It started after dinner yesterday, a sharp burning
+                      sensation beneath my breastbone. It gets worse when I lie
+                      flat.”
+                    </p>
+                  </div>
+                </div>
+                <div className="station-dialog station-dialog--response">
+                  <span className="station-dialog__avatar">RX</span>
+                  <div>
+                    <p className="eyebrow">Practice your response</p>
+                    <p>
+                      “I understand how uncomfortable that is. Are you also
+                      experiencing shortness of breath or pain radiating to your
+                      jaw?”
+                    </p>
+                  </div>
+                </div>
+                <div className="station-card__telemetry">
+                  <span>Voice AI practice preview</span>
+                  <div aria-hidden="true" className="waveform">
+                    {[2, 4, 6, 3, 5, 7, 4, 5, 6, 3, 5, 2, 4, 6].map(
+                      (height, index) => (
+                        <i key={`${height}-${index}`} style={{ height: `${height * 3}px` }} />
+                      ),
+                    )}
+                  </div>
+                </div>
+              </aside>
             </div>
-            <div aria-label="Program highlights" className="hero__highlights">
-              <span>
-                <Icon name="repeat" /> Unlimited replays
-              </span>
-              <span>
-                <Icon name="mic" /> 24/7 AI voice practice
-              </span>
-              <span>
-                <Icon name="shield" /> PEBC blueprint aligned
-              </span>
-            </div>
-            <div className="hero__proof">
+
+            <div aria-label="Program highlights" className="hero__proof">
               <div>
                 <strong>100%</strong>
                 <span>On-demand</span>
+                <small>Study on your own schedule</small>
               </div>
               <div>
                 <strong>24/7</strong>
                 <span>Replay access</span>
+                <small>Rewatch lessons when you need</small>
               </div>
               <div>
                 <strong>1,200+</strong>
                 <span>IPGs prepared</span>
+                <small>Canadian pharmacy candidates</small>
               </div>
             </div>
           </div>
-          <div aria-hidden="true" className="hero__seal">
-            <Image
-              alt=""
-              height={210}
-              src="/truenorth-crest.png"
-              width={210}
-            />
-          </div>
         </section>
 
-        <section className="section" id="why-truenorth">
+        <section className="section value-section" id="why-truenorth">
           <div className="container">
-            <SectionHeading
-              description="A focused path through the material, built around the way you need to study."
-              eyebrow="Built to help you pass"
-              title={
-                <>
-                  Everything you need, <em>nothing you don’t</em>
-                </>
-              }
-            />
+            <div className="value-section__heading">
+              <SectionHeading
+                align="left"
+                description="A focused path through the material, built around the way you need to study."
+                eyebrow="Built to help you pass"
+                title={
+                  <>
+                    Everything you need, <em>nothing you don’t</em>
+                  </>
+                }
+              />
+              <p className="value-section__standard">
+                The TrueNorth standard <Icon name="shield" />
+              </p>
+            </div>
             <div className="benefit-grid">
-              {benefits.map((benefit) => (
-                <article className="benefit-card" key={benefit.title}>
-                  <span className="icon-tile">
-                    <Icon name={benefit.icon} />
-                  </span>
-                  <h3>{benefit.title}</h3>
-                  <p>{benefit.description}</p>
+              {benefits.map((benefit, index) => (
+                <article
+                  className={`benefit-card benefit-card--${index + 1}`}
+                  key={benefit.title}
+                >
+                  <div>
+                    <span className="icon-tile">
+                      <Icon name={benefit.icon} />
+                    </span>
+                    <h3>{benefit.title}</h3>
+                    <p>{benefit.description}</p>
+                  </div>
+                  {index === 0 ? (
+                    <div className="benefit-card__faculty">
+                      <span>Rx</span>
+                      <p>
+                        <strong>Licensed Canadian Faculty</strong>
+                        <small>Hospital, community, and ambulatory preceptors</small>
+                      </p>
+                      <Icon name="play" />
+                    </div>
+                  ) : null}
+                  {index === 1 ? (
+                    <div className="benefit-card__mini-list">
+                      <span>
+                        Foundational Core (PK &amp; Math) <Icon name="check" />
+                      </span>
+                      <span>
+                        Therapeutic modules <Icon name="check" />
+                      </span>
+                    </div>
+                  ) : null}
+                  {index === 2 ? (
+                    <div className="benefit-card__footer">
+                      24/7 voice AI engine <Icon name="chevron" />
+                    </div>
+                  ) : null}
+                  {index === 3 ? (
+                    <div className="benefit-card__metrics">
+                      <span>
+                        <strong>7 min</strong>Station timing drills
+                      </span>
+                      <span>
+                        <strong>High-yield</strong>Blueprint tagging
+                      </span>
+                    </div>
+                  ) : null}
                 </article>
               ))}
             </div>
@@ -684,7 +800,7 @@ function LandingPage() {
           </div>
         </section>
 
-        <section className="section" id="courses">
+        <section className="section programs-section" id="courses">
           <div className="container">
             <SectionHeading
               description="Three self-paced programs that build on each other—from document approval to clinical mastery."
@@ -726,15 +842,24 @@ function LandingPage() {
                 currently taking ramipril, bisoprolol, and furosemide. Which
                 additional agent is recommended?
               </h3>
-              <ol className="answer-list">
-                <li>A. Spironolactone 25 mg daily</li>
-                <li>B. Digoxin 0.125 mg daily</li>
-                <li>C. Amlodipine 5 mg daily</li>
-                <li>D. Increase furosemide dose</li>
-              </ol>
+              <fieldset className="answer-list">
+                <legend className="visually-hidden">Choose an answer</legend>
+                {[
+                  "A. Spironolactone 25 mg daily",
+                  "B. Digoxin 0.125 mg daily",
+                  "C. Amlodipine 5 mg daily",
+                  "D. Increase furosemide dose",
+                ].map((answer) => (
+                  <label className="answer-option" key={answer}>
+                    <input name="practice-answer" type="radio" value={answer} />
+                    <span>{answer}</span>
+                    <Icon name="check" />
+                  </label>
+                ))}
+              </fieldset>
               <details className="answer-reveal">
                 <summary>
-                  <span>Select an answer to see the explanation</span>
+                  <span>Review the sample rationale</span>
                   <Icon name="chevron" />
                 </summary>
                 <p>
@@ -833,7 +958,7 @@ function LandingPage() {
           </div>
         </section>
 
-        <section className="section section--tint" id="student-results">
+        <section className="section section--tint" id="reviews">
           <div className="container">
             <SectionHeading
               eyebrow="Student results"
@@ -910,17 +1035,25 @@ function LandingPage() {
             <div>
               <p className="eyebrow">Free community</p>
               <h2>
-                Join our free <em>WhatsApp groups</em>
+                Start studying <em>today</em>
               </h2>
               <p>
-                Get exam tips, updates, and guidance from the TrueNorth
-                community.
+                Ask about access, course options, and the right path for your
+                PEBC preparation. Connect with our advisors or join free
+                WhatsApp peer study groups.
               </p>
+              <div className="community-section__actions">
+                <ActionLink href={contactHref}>Contact TrueNorth Academy</ActionLink>
+                <a className="community-section__secondary" href="#community-groups">
+                  Join free WhatsApp groups <Icon name="chevron" />
+                </a>
+              </div>
             </div>
-            <div className="community-links">
+            <div className="community-links" id="community-groups">
               {["Foundational Core", "TrueNorth Qualifying MCQ", "TrueNorth OSCE"].map(
                 (group) => (
                   <a href={contactHref} key={group} rel="noreferrer" target="_blank">
+                    <Icon name="heart" />
                     {group}
                     <Icon name="chevron" />
                   </a>
@@ -952,6 +1085,13 @@ function LandingPage() {
               WhatsApp · +1 (437) 234-9554
             </a>
             <a href="#community">Free community groups</a>
+          </div>
+          <div>
+            <h2>Important</h2>
+            <a href="https://pebc.ca/" rel="noreferrer" target="_blank">
+              Official PEBC guidance
+            </a>
+            <a href="#faq">Clinical disclaimer</a>
           </div>
         </div>
         <div className="container site-footer__bottom">
