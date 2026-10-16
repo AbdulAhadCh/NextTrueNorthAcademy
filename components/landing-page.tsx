@@ -158,7 +158,7 @@ function SiteHeader() {
           <a className="header-contact" href="#community">
             Contact
           </a>
-          <ActionLink href="#pricing">Get started</ActionLink>
+          <ActionLink href="/login">Get started</ActionLink>
           <details className="mobile-nav">
             <summary aria-label="Open navigation menu">
               <span />
