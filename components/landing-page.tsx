@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import StackedCardCarousel from "@/components/stacked-card-carousel";
 
 const contactHref =
   "https://wa.me/14372349554?text=Hi%20TrueNorth%20Academy%2C%20I%27d%20like%20to%20learn%20more%20about%20PEBC%20prep.";
@@ -607,66 +608,10 @@ function LandingPage() {
                 </div>
               </div>
 
-              <aside aria-label="Sample OSCE station preview" className="station-card">
-                <div className="station-card__header">
-                  <div>
-                    <span className="station-card__status" />
-                    <div>
-                      <p className="eyebrow">Sample case preview</p>
-                      <h2>Burning Chest Pain</h2>
-                    </div>
-                  </div>
-                  <span className="station-card__timer">
-                    <Icon name="clock" /> 06:42
-                  </span>
-                </div>
-                <div className="station-card__details">
-                  <div>
-                    <span>Patient</span>
-                    <strong>Michael C.</strong>
-                  </div>
-                  <div>
-                    <span>Age</span>
-                    <strong>42 years</strong>
-                  </div>
-                  <div>
-                    <span>Domain</span>
-                    <strong>Gastrointestinal</strong>
-                  </div>
-                </div>
-                <div className="station-dialog">
-                  <span className="station-dialog__avatar">PT</span>
-                  <div>
-                    <p className="eyebrow">Patient prompt</p>
-                    <p>
-                      “It started after dinner yesterday, a sharp burning
-                      sensation beneath my breastbone. It gets worse when I lie
-                      flat.”
-                    </p>
-                  </div>
-                </div>
-                <div className="station-dialog station-dialog--response">
-                  <span className="station-dialog__avatar">RX</span>
-                  <div>
-                    <p className="eyebrow">Practice your response</p>
-                    <p>
-                      “I understand how uncomfortable that is. Are you also
-                      experiencing shortness of breath or pain radiating to your
-                      jaw?”
-                    </p>
-                  </div>
-                </div>
-                <div className="station-card__telemetry">
-                  <span>Voice AI practice preview</span>
-                  <div aria-hidden="true" className="waveform">
-                    {[2, 4, 6, 3, 5, 7, 4, 5, 6, 3, 5, 2, 4, 6].map(
-                      (height, index) => (
-                        <i key={`${height}-${index}`} style={{ height: `${height * 3}px` }} />
-                      ),
-                    )}
-                  </div>
-                </div>
-              </aside>
+              <StackedCardCarousel
+                ariaLabel="TrueNorth Academy faculty and learning"
+                autoPlayMs={6500}
+              />
             </div>
 
             <div aria-label="Program highlights" className="hero__proof">
