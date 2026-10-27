@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import HeroStats from "@/components/hero-stats";
 import StackedCardCarousel from "@/components/stacked-card-carousel";
 
 const contactHref =
@@ -142,7 +143,6 @@ function Brand() {
 const navigation = [
   { href: "#why-truenorth", label: "Why TrueNorth" },
   { href: "#courses", label: "Programs" },
-  { href: "#osce", label: "Voice AI OSCE" },
   { href: "#learning-loop", label: "Learning Loop" },
   { href: "#pricing", label: "Pricing" },
   { href: "#reviews", label: "Reviews" },
@@ -339,84 +339,7 @@ function ProgramCard({
   );
 }
 
-const scenarios = [
-  {
-    category: "Gastrointestinal",
-    title: "Burning Chest Pain",
-    patient: "Michael Chen, 42",
-    icon: "heart",
-  },
-  {
-    category: "Respiratory",
-    title: "Shortness of Breath",
-    patient: "Sarah Patel, 28",
-    icon: "mic",
-  },
-  {
-    category: "Endocrine · Counselling",
-    title: "New Diabetes Diagnosis",
-    patient: "Robert Singh, 56",
-    icon: "core",
-  },
-] as const;
 
-function OsceSection() {
-  return (
-    <section className="section osce-section" id="osce">
-      <div className="container osce-section__inner">
-        <div className="osce-section__heading">
-          <SectionHeading
-            align="left"
-            description="Practise with lifelike patient scenarios in a low-pressure environment, whenever it fits your schedule."
-            eyebrow="AI-powered practice"
-            title={
-              <>
-                Meet your <em>24/7 OSCE</em> practice partner
-              </>
-            }
-          />
-          <ActionLink href={contactHref}>Ask about the OSCE simulator</ActionLink>
-        </div>
-        <div className="simulator-banner">
-          <div>
-            <p className="eyebrow">Voice AI patient simulator</p>
-            <h3>Real-time OSCE practice, on your terms.</h3>
-            <p>
-              Work through patient conversations, practise your approach, and
-              build confidence before exam day.
-            </p>
-          </div>
-          <span>
-            <Icon name="clock" /> Zero scheduling delays
-          </span>
-        </div>
-        <div className="simulator-panel">
-          <div className="scenario-grid">
-            {scenarios.map((scenario) => (
-              <article className="scenario-card" key={scenario.title}>
-                <div className="scenario-card__top">
-                  <span className="duration">
-                    <Icon name="clock" /> 7 min
-                  </span>
-                  <span className="scenario-card__category">{scenario.category}</span>
-                </div>
-                <h4>{scenario.title}</h4>
-                <p className="scenario-card__patient">Patient: {scenario.patient}</p>
-                <div className="scenario-card__modes">
-                  <a href={contactHref}>Learn mode</a>
-                  <a href={contactHref}>Exam mode</a>
-                </div>
-              </article>
-            ))}
-          </div>
-          <p className="simulator-panel__note">
-            Practise at your pace. Repeat each case as often as you need.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 const learningSteps = [
   {
@@ -578,33 +501,44 @@ function LandingPage() {
             <div className="hero__layout">
               <div className="hero__content">
                 <p className="eyebrow hero__eyebrow">
-                  For international pharmacy graduates
+                  <Icon name="core" />
+                  Aligned with PEBC Qualifying Blueprint &amp; NAPRA Clinical Standards
                 </p>
                 <h1>
-                  Master the PEBC Qualifying Exam &amp; OSCE{" "}
-                  <em>— 100% On-Demand</em>
+                  Rigorous Canadian Pharmacy Licensure Preparation.
+                  <span>On-Demand &amp; Faculty Led.</span>
                 </h1>
                 <p className="hero__description">
-                  Skip rigid class schedules. Access unlimited lecture replays,
-                  a built-in Foundational Core, and an interactive AI Voice
-                  Patient Simulator.
+                  Engineered for International Pharmacy Graduates. Prepare for
+                  Qualifying Exam Part I and Part II with foundational
+                  pharmacokinetics, 24/7 AI voice patient simulation, and
+                  Canadian pharmacy faculty guidance.
                 </p>
+                <div aria-label="Program features" className="hero__pillars">
+                  <div className="hero__pillar">
+                    <span className="hero__pillar-icon"><Icon name="core" /></span>
+                    <span><strong>Section 0 included</strong><small>PK &amp; math calculations</small></span>
+                  </div>
+                  <div className="hero__pillar">
+                    <span className="hero__pillar-icon"><Icon name="mic" /></span>
+                    <span><strong>Voice AI OSCE</strong><small>Realistic patient stations</small></span>
+                  </div>
+                  <div className="hero__pillar">
+                    <span className="hero__pillar-icon"><Icon name="repeat" /></span>
+                    <span><strong>Unlimited replays</strong><small>Self-paced access</small></span>
+                  </div>
+                </div>
                 <div className="hero__actions">
-                  <ActionLink href="#courses">Explore programs</ActionLink>
-                  <ActionLink href="#osce" variant="secondary">
-                    <Icon name="mic" /> Try the Voice AI OSCE
+                  <ActionLink href="#courses">Explore Academic Programs</ActionLink>
+                  <ActionLink href={contactHref} variant="secondary">
+                    <span aria-hidden="true" className="hero__live-dot" />
+                    Ask about Voice AI OSCE
                   </ActionLink>
                 </div>
-                <div aria-label="Program highlights" className="hero__highlights">
-                  <span>
-                    <Icon name="check" /> Unlimited replays
-                  </span>
-                  <span>
-                    <Icon name="check" /> 24/7 AI voice practice
-                  </span>
-                  <span>
-                    <Icon name="check" /> PEBC blueprint aligned
-                  </span>
+                <div aria-label="Academic credentials" className="hero__trust">
+                  <span><Icon name="check" /> Canadian pharmacist instructors</span>
+                  <span><Icon name="check" /> NAPRA competency benchmarks</span>
+                  <span><Icon name="check" /> Document evaluation roadmap</span>
                 </div>
               </div>
 
@@ -613,26 +547,10 @@ function LandingPage() {
                 autoPlayMs={6500}
               />
             </div>
-
-            <div aria-label="Program highlights" className="hero__proof">
-              <div>
-                <strong>100%</strong>
-                <span>On-demand</span>
-                <small>Study on your own schedule</small>
-              </div>
-              <div>
-                <strong>24/7</strong>
-                <span>Replay access</span>
-                <small>Rewatch lessons when you need</small>
-              </div>
-              <div>
-                <strong>1,200+</strong>
-                <span>IPGs prepared</span>
-                <small>Canadian pharmacy candidates</small>
-              </div>
-            </div>
           </div>
         </section>
+
+        <HeroStats />
 
         <section className="section value-section" id="why-truenorth">
           <div className="container">
@@ -763,8 +681,6 @@ function LandingPage() {
             </div>
           </div>
         </section>
-
-        <OsceSection />
 
         <section className="section" id="practice">
           <div className="container">
@@ -1021,7 +937,7 @@ function LandingPage() {
           <div>
             <h2>Navigation</h2>
             <a href="#courses">Courses</a>
-            <a href="#osce">OSCE simulator</a>
+            <a href="#practice">MCQ practice preview</a>
             <a href="#pricing">Pricing</a>
           </div>
           <div>

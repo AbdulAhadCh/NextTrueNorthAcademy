@@ -1,8 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useActionState, useRef, useState, useTransition } from "react";
 import AuthScene from "@/components/auth-scene";
+import {
+  requestPasswordReset,
+  signIn,
+  signUp,
+  type AuthState,
+} from "@/app/login/actions";
 
 type AuthMode = "signin" | "signup";
 
@@ -61,16 +67,8 @@ function AuthMark() {
 
 export default function LoginForm() {
   const [mode, setMode] = useState<AuthMode>("signin");
-  const [passwordVisible, setPasswordVisible] = useState(false);
   const [message, setMessage] = useState("");
   const isSignUp = mode === "signup";
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setMessage(
-      "Secure sign-in is not connected yet. Please check back soon or contact TrueNorth Academy.",
-    );
-  }
 
   function switchMode(nextMode: AuthMode) {
     setMode(nextMode);
@@ -100,135 +98,10 @@ export default function LoginForm() {
           </p>
         </header>
 
-        <div aria-label="Continue with a social account" className="auth-social">
-          <button
-            className="auth-social__button"
-            onClick={() => setMessage("Google sign-in is not configured yet.")}
-            type="button"
-          >
-            <GoogleIcon />
-            Google
-          </button>
-          <button
-            className="auth-social__button"
-            onClick={() => setMessage("Apple sign-in is not configured yet.")}
-            type="button"
-          >
-            <AppleIcon />
-            Apple
-          </button>
-        </div>
 
-        <div aria-hidden="true" className="auth-divider">
-          <span />
-          <span>OR CONTINUE WITH EMAIL</span>
-          <span />
-        </div>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          {isSignUp ? (
-            <label className="auth-field">
-              <span>Name</span>
-              <span className="auth-field__control">
-                <input
-                  autoComplete="name"
-                  name="name"
-                  placeholder="Your name"
-                  required
-                />
-              </span>
-            </label>
-          ) : null}
 
-          <label className="auth-field">
-            <span>Email address</span>
-            <span className="auth-field__control">
-              <svg aria-hidden="true" viewBox="0 0 20 20">
-                <rect height="12" rx="2" width="16" x="2" y="4" />
-                <path d="m3 6 7 5 7-5" />
-              </svg>
-              <input
-                autoComplete="email"
-                name="email"
-                placeholder="name@example.com"
-                required
-                type="email"
-              />
-            </span>
-          </label>
-
-          <label className="auth-field">
-            <span className="auth-field__label">
-              Password
-              {!isSignUp ? (
-                <button
-                  className="auth-forgot"
-                  onClick={() =>
-                    setMessage(
-                      "Password reset is not available until sign-in is connected.",
-                    )
-                  }
-                  type="button"
-                >
-                  Forgot password?
-                </button>
-              ) : null}
-            </span>
-            <span className="auth-field__control">
-              <svg aria-hidden="true" viewBox="0 0 20 20">
-                <rect height="9" rx="2" width="14" x="3" y="8" />
-                <path d="M6 8V6a4 4 0 0 1 8 0v2m-4 4v2" />
-              </svg>
-              <input
-                autoComplete={isSignUp ? "new-password" : "current-password"}
-                minLength={8}
-                name="password"
-                placeholder="At least 8 characters"
-                required
-                type={passwordVisible ? "text" : "password"}
-              />
-              <button
-                aria-label={passwordVisible ? "Hide password" : "Show password"}
-                aria-pressed={passwordVisible}
-                className="auth-password-toggle"
-                onClick={() => setPasswordVisible((visible) => !visible)}
-                type="button"
-              >
-                <svg aria-hidden="true" viewBox="0 0 20 20">
-                  {passwordVisible ? (
-                    <>
-                      <path d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5Z" />
-                      <circle cx="10" cy="10" r="2" />
-                    </>
-                  ) : (
-                    <>
-                      <path d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5Z" />
-                      <circle cx="10" cy="10" r="2" />
-                      <path d="m4 4 12 12" />
-                    </>
-                  )}
-                </svg>
-              </button>
-            </span>
-          </label>
-
-          {!isSignUp ? (
-            <label className="auth-remember">
-              <input defaultChecked name="remember" type="checkbox" />
-              <span>Remember me for 30 days</span>
-            </label>
-          ) : null}
-
-          <button className="auth-submit" type="submit">
-            {isSignUp ? "Create account" : "Sign in to Portal"}
-            <svg aria-hidden="true" viewBox="0 0 20 20">
-              <path d="M3 10h13m-5-5 5 5-5 5" />
-            </svg>
-          </button>
-          <p aria-live="polite" className="auth-message" role="status">
-            {message}
-          </p>
-        </form>
+        <EmailForm key={mode} mode={mode} socialMessage={message} />
 
         <p className="auth-switch">
           {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
@@ -249,5 +122,144 @@ export default function LoginForm() {
         Secure access to your TrueNorth Academy portal
       </p>
     </main>
+  );
+}
+
+/**
+ * The email + password form. It gets a fresh copy (via `key={mode}`) whenever
+ * the visitor switches between "Sign in" and "Sign up", so old messages clear.
+ */
+function EmailForm({ mode, socialMessage }: { mode: AuthMode; socialMessage: string }) {
+  const isSignUp = mode === "signup";
+  const formRef = useRef<HTMLFormElement>(null);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  // useActionState runs the server action on submit and gives us its result
+  // (state), the function to put on the form (formAction) and a loading flag (pending).
+  const [state, formAction, pending] = useActionState<AuthState, FormData>(
+    isSignUp ? signUp : signIn,
+    {},
+  );
+
+  const [resetState, setResetState] = useState<AuthState | null>(null);
+  const [resetPending, startReset] = useTransition();
+
+  function handleForgotPassword() {
+    const email = formRef.current?.elements.namedItem("email") as HTMLInputElement | null;
+    startReset(async () => {
+      setResetState(await requestPasswordReset(email?.value ?? ""));
+    });
+  }
+
+  // Show the most recent message: password-reset result, then form result, then social buttons.
+  const shown = resetState ?? state;
+  const error = shown.error ?? (shown.notice ? "" : socialMessage);
+  const notice = shown.error ? "" : shown.notice;
+
+  return (
+    <form action={formAction} className="auth-form" ref={formRef}>
+      {isSignUp ? (
+        <label className="auth-field">
+          <span>Name</span>
+          <span className="auth-field__control">
+            <input
+              autoComplete="name"
+              name="name"
+              placeholder="Your name"
+              required
+            />
+          </span>
+        </label>
+      ) : null}
+
+      <label className="auth-field">
+        <span>Email address</span>
+        <span className="auth-field__control">
+          <svg aria-hidden="true" viewBox="0 0 20 20">
+            <rect height="12" rx="2" width="16" x="2" y="4" />
+            <path d="m3 6 7 5 7-5" />
+          </svg>
+          <input
+            autoComplete="email"
+            name="email"
+            placeholder="name@example.com"
+            required
+            type="email"
+          />
+        </span>
+      </label>
+
+      <label className="auth-field">
+        <span className="auth-field__label">
+          Password
+          {!isSignUp ? (
+            <button
+              className="auth-forgot"
+              disabled={resetPending}
+              onClick={handleForgotPassword}
+              type="button"
+            >
+              {resetPending ? "Sending…" : "Forgot password?"}
+            </button>
+          ) : null}
+        </span>
+        <span className="auth-field__control">
+          <svg aria-hidden="true" viewBox="0 0 20 20">
+            <rect height="9" rx="2" width="14" x="3" y="8" />
+            <path d="M6 8V6a4 4 0 0 1 8 0v2m-4 4v2" />
+          </svg>
+          <input
+            autoComplete={isSignUp ? "new-password" : "current-password"}
+            minLength={8}
+            name="password"
+            placeholder="At least 8 characters"
+            required
+            type={passwordVisible ? "text" : "password"}
+          />
+          <button
+            aria-label={passwordVisible ? "Hide password" : "Show password"}
+            aria-pressed={passwordVisible}
+            className="auth-password-toggle"
+            onClick={() => setPasswordVisible((visible) => !visible)}
+            type="button"
+          >
+            <svg aria-hidden="true" viewBox="0 0 20 20">
+              {passwordVisible ? (
+                <>
+                  <path d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5Z" />
+                  <circle cx="10" cy="10" r="2" />
+                </>
+              ) : (
+                <>
+                  <path d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5Z" />
+                  <circle cx="10" cy="10" r="2" />
+                  <path d="m4 4 12 12" />
+                </>
+              )}
+            </svg>
+          </button>
+        </span>
+      </label>
+
+      <button className="auth-submit" disabled={pending} type="submit">
+        {pending
+          ? isSignUp
+            ? "Creating account…"
+            : "Signing in…"
+          : isSignUp
+            ? "Create account"
+            : "Sign in to Portal"}
+        <svg aria-hidden="true" viewBox="0 0 20 20">
+          <path d="M3 10h13m-5-5 5 5-5 5" />
+        </svg>
+      </button>
+      <p
+        aria-live="polite"
+        className={notice ? "auth-message auth-message--notice" : "auth-message"}
+        role="status"
+      >
+        {notice || error}
+      </p>
+    </form>
   );
 }

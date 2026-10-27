@@ -17,24 +17,24 @@ export type StackedCard = {
 const DEFAULT_CARDS: readonly StackedCard[] = [
   {
     id: "preceptors",
-    image: "/hero/hero-preceptor.jpg",
-    alt: "Clinical pharmacist in a white coat in a modern pharmacy",
+    image: "/hero/clinical-preceptor.jpg",
+    alt: "Healthcare professional in a white coat holding a clipboard in a bright clinic",
     tag: "Licensed Canadian Clinical Preceptors",
     title: "Learn from Canadian pharmacy faculty",
     description: "Faculty-led guidance for your PEBC preparation.",
   },
   {
     id: "clinical-practice",
-    image: "/hero/hero-clinical-team.jpg",
-    alt: "Pharmacist discussing patient care in a community pharmacy",
+    image: "/hero/clinical-physician.jpg",
+    alt: "Doctor in a white coat with a stethoscope",
     tag: "Hospital & Community Practice",
     title: "Build practical clinical confidence",
     description: "Prepare for patient conversations and care planning.",
   },
   {
     id: "pebc-case-study",
-    image: "/hero/hero-candidate.jpg",
-    alt: "Pharmacy graduate studying a clinical blueprint at a desk",
+    image: "/hero/pharmacy-students.jpg",
+    alt: "University students studying together around a laptop in a library",
     tag: "Structured PEBC Case Study",
     title: "Connect foundations to practice",
     description:

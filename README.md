@@ -34,3 +34,11 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## NestJS API
+
+Set the server-only `NEST_API_URL` environment variable to the NestJS API base URL
+(for local development, `http://localhost:4000`). Authenticated requests to
+`/api/*` forward the method, path, query, and body to NestJS with the signed-in
+user's Supabase access token as a Bearer token. Configure the production API URL
+in your deployment environment; do not use a `NEXT_PUBLIC_` prefix for it.
